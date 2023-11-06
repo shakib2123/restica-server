@@ -1,11 +1,17 @@
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -29,8 +35,37 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     client.connect();
+
+    const foodCollection = client.db("ResticaFood").collection("foods");
+    const userCollection = client.db("ResticaFood").collection("users");
+
+    app.post("/api/v1/users", async (req, res) => {
+      try {
+        const user = req.body;
+        console.log(user);
+        const result = await userCollection.insertOne(user);
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+    app.post("/api/v1/foods", async (req, res) => {
+      try {
+        const food = req.body;
+        const result = await foodCollection.insertOne(food);
+        res.send(result);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+    app.get("/api/v1/foods", async (req, res) => {
+      const query = {};
+      const result = await foodCollection.find(query).toArray();
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
