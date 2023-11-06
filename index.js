@@ -38,6 +38,7 @@ async function run() {
 
     const foodCollection = client.db("ResticaFood").collection("foods");
     const userCollection = client.db("ResticaFood").collection("users");
+    const orderCollection = client.db("ResticaFood").collection("orders");
 
     app.post("/api/v1/users", async (req, res) => {
       try {
@@ -90,6 +91,8 @@ async function run() {
         console.log(error);
       }
     });
+      
+      
 
     // Send a ping to confirm a successful connection
     client.db("admin").command({ ping: 1 });
