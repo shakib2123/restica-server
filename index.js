@@ -91,6 +91,29 @@ async function run() {
         console.log(error);
       }
     });
+    app.patch("/api/v1/foods/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedInfo = req.body;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const updateDoc = {
+          $set: {
+            quantity: updatedInfo.updatedStock,
+            purchase_count: updatedInfo.updatedCount,
+          },
+        };
+        const result = await foodCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        res.send(result);
+        
+      } catch (error) {
+        console.log(error);
+      }
+    });
 
     app.post("/api/v1/orders", async (req, res) => {
       try {
