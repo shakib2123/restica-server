@@ -91,8 +91,16 @@ async function run() {
         console.log(error);
       }
     });
-      
-      
+
+    app.post("/api/v1/orders", async (req, res) => {
+      try {
+        const order = req.body;
+        const result = await orderCollection.insertOne(order);
+        res.send(result);
+      } catch (error) {
+        console.log(error);
+      }
+    });
 
     // Send a ping to confirm a successful connection
     client.db("admin").command({ ping: 1 });
