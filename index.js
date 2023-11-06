@@ -60,8 +60,17 @@ async function run() {
     });
     app.get("/api/v1/foods", async (req, res) => {
       const query = {};
-      const result = await foodCollection.find(query).toArray();
-      res.send(result);
+
+      const page = Number(req.query.page)-1;
+      const limit = Number(req.query.limit);
+        console.log(page, limit)
+      const foodsCount = await foodCollection.estimatedDocumentCount();
+      const result = await foodCollection
+        .find(query)
+        .skip(page * limit)
+        .limit(limit)
+        .toArray();
+      res.send({ result, foodsCount });
     });
 
     // Send a ping to confirm a successful connection
