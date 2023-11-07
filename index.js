@@ -115,15 +115,29 @@ async function run() {
     });
 
     app.get("/api/v1/orders", async (req, res) => {
-      const email = req.query.email;
-      const query = { email: email };
-      const result = await orderCollection.find(query).toArray();
-      res.send(result);
+      try {
+        const email = req.query.email;
+        const query = { email: email };
+        const result = await orderCollection.find(query).toArray();
+        res.send(result);
+      } catch (error) {
+        console.log(error);
+      }
     });
     app.post("/api/v1/orders", async (req, res) => {
       try {
         const order = req.body;
         const result = await orderCollection.insertOne(order);
+        res.send(result);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+    app.delete("/api/v1/orders-cancel/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await orderCollection.deleteOne(query);
         res.send(result);
       } catch (error) {
         console.log(error);
