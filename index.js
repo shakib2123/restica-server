@@ -15,7 +15,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-app.get("/", async (req, res) => {
+app.get("/api/v1", async (req, res) => {
   res.send("Restica running here 😎.");
 });
 
@@ -109,12 +109,17 @@ async function run() {
           options
         );
         res.send(result);
-        
       } catch (error) {
         console.log(error);
       }
     });
 
+    app.get("/api/v1/orders", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await orderCollection.find(query).toArray();
+      res.send(result);
+    });
     app.post("/api/v1/orders", async (req, res) => {
       try {
         const order = req.body;
