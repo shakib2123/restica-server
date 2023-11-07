@@ -65,8 +65,12 @@ async function run() {
         const page = Number(req.query.page) - 1;
         const limit = Number(req.query.limit);
         const search = req.query.search;
+        const foodOwner = req.query.email;
         if (search) {
           query.name = search;
+        }
+        if (foodOwner) {
+          query.email = foodOwner;
         }
 
         const foodsCount = await foodCollection.estimatedDocumentCount();
