@@ -147,6 +147,34 @@ async function run() {
         console.log(error);
       }
     });
+    app.patch("/api/v1/updateFood/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedFood = req.body;
+        const filter = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: {
+            name: updatedFood.name,
+            image: updatedFood.image,
+            category: updatedFood.category,
+            quantity: updatedFood.quantity,
+            price: updatedFood.price,
+            origin: updatedFood.origin,
+            video: updatedFood.video,
+            description: updatedFood.description,
+          },
+        };
+        const options = { upsert: true };
+        const result = await foodCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        res.send(result);
+      } catch (error) {
+        console.log(error);
+      }
+    });
 
     // Send a ping to confirm a successful connection
     client.db("admin").command({ ping: 1 });
