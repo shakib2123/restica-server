@@ -62,22 +62,28 @@ async function run() {
     app.get("/api/v1/foods", async (req, res) => {
       try {
         const query = {};
+        const sortObj = {};
         const page = Number(req.query.page) - 1;
         const limit = Number(req.query.limit);
         const search = req.query.search;
         const foodOwner = req.query.email;
+        const sortField = req.query.sortField;
+        const sortOrder = req.query.sortOrder;
         if (search) {
           query.name = search;
         }
         if (foodOwner) {
           query.email = foodOwner;
         }
-
+         if (sortField && sortOrder) {
+           sortObj[sortField] = sortOrder; 
+         }
         const foodsCount = await foodCollection.estimatedDocumentCount();
         const result = await foodCollection
           .find(query)
           .skip(page * limit)
           .limit(limit)
+          .sort(sortObj)
           .toArray();
         res.send({ result, foodsCount });
       } catch (error) {
@@ -180,9 +186,10 @@ async function run() {
         const result = await foodCollection
           .find()
           .sort({
-            purchase_count: 'desc',
+            purchase_count: "desc",
           })
-          .limit(6).toArray();
+          .limit(6)
+          .toArray();
         res.send(result);
       } catch (error) {
         console.log(error);
