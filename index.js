@@ -175,6 +175,19 @@ async function run() {
         console.log(error);
       }
     });
+    app.get("/api/v1/topFoods", async (req, res) => {
+      try {
+        const result = await foodCollection
+          .find()
+          .sort({
+            purchase_count: 'desc',
+          })
+          .limit(6).toArray();
+        res.send(result);
+      } catch (error) {
+        console.log(error);
+      }
+    });
 
     // Send a ping to confirm a successful connection
     client.db("admin").command({ ping: 1 });
