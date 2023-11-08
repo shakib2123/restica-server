@@ -142,7 +142,7 @@ async function run() {
       }
     });
 
-    app.get("/api/v1/foods/:id",verifyToken, async (req, res) => {
+    app.get("/api/v1/foods/:id", async (req, res) => {
       try {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
