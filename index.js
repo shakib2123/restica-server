@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
+      
       "https://restica-food.web.app",
       "https://restica-food.firebaseapp.com",
     ],
@@ -104,7 +104,7 @@ async function run() {
         console.log(error);
       }
     });
-    app.get("/api/v1/foods", verifyToken, async (req, res) => {
+    app.get("/api/v1/foods", async (req, res) => {
       try {
         const query = {};
         const sortObj = {};
@@ -136,7 +136,7 @@ async function run() {
       }
     });
 
-    app.get("/api/v1/foods/:id", verifyToken, async (req, res) => {
+    app.get("/api/v1/foods/:id", async (req, res) => {
       try {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
