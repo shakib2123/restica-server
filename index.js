@@ -57,6 +57,7 @@ async function run() {
     const foodCollection = client.db("ResticaFood").collection("foods");
     const userCollection = client.db("ResticaFood").collection("users");
     const orderCollection = client.db("ResticaFood").collection("orders");
+
     app.post("/api/v1/jwt", async (req, res) => {
       const user = req.body;
       console.log("user for token", user);
@@ -67,6 +68,7 @@ async function run() {
         .cookie("token", token, {
           httpOnly: true,
           secure: true,
+          sameSite: false,
         })
         .send({ success: true });
     });
@@ -74,6 +76,14 @@ async function run() {
       const user = req.body;
       console.log("logged out user", user);
       res.clearCookie("token", { maxAge: 0 }).send({ success: true });
+    });
+    app.get("/api/v1/users", async (req, res) => {
+      try {
+        const result = await userCollection.find().toArray();
+        res.send(result);
+      } catch (error) {
+        console.log(error);
+      }
     });
     app.post("/api/v1/users", async (req, res) => {
       try {
@@ -94,9 +104,8 @@ async function run() {
         console.log(error);
       }
     });
-    app.get("/api/v1/foods",  async (req, res) => {
+    app.get("/api/v1/foods", verifyToken, async (req, res) => {
       try {
-        
         const query = {};
         const sortObj = {};
         const page = Number(req.query.page) - 1;
@@ -127,7 +136,7 @@ async function run() {
       }
     });
 
-    app.get("/api/v1/foods/:id", async (req, res) => {
+    app.get("/api/v1/foods/:id", verifyToken, async (req, res) => {
       try {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
