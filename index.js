@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 app.use(
   cors({
     origin: [
-      
+      "http://localhost:5173",
       "https://restica-food.web.app",
       "https://restica-food.firebaseapp.com",
     ],
@@ -19,7 +19,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-app.get("/api/v1", async (req, res) => {
+app.get("/", async (req, res) => {
   res.send("Restica running here 😎.");
 });
 
@@ -66,17 +66,23 @@ async function run() {
       });
       res
         .cookie("token", token, {
-          httpOnly: true,
+          httpOnly: false,
           secure: true,
-          sameSite: false,
+          sameSite: "none",
         })
         .send({ success: true });
     });
-    app.post("/api/v1/logout", async (req, res) => {
-      const user = req.body;
-      console.log("logged out user", user);
-      res.clearCookie("token", { maxAge: 0 }).send({ success: true });
-    });
+    
+
+   app.post("/api/v1/logout", async (req, res) => {
+     const user = req.body;
+     console.log("logging out", user);
+     res
+       .clearCookie("token", { maxAge: 0, sameSite: "none", secure: true })
+       .send({ success: true });
+   });
+
+
     app.get("/api/v1/users", async (req, res) => {
       try {
         const result = await userCollection.find().toArray();
